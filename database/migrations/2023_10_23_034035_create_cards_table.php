@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->unsignedBigInteger('id_label');
-            $table->timestamp('due_date')->nullable();
+            $table->date('due_date')->nullable();
             $table->unsignedBigInteger('id_assign')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->foreign('created_by')->references('id')->on('users'); // Relasi dengan tabel "users"

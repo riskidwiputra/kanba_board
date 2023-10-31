@@ -7,6 +7,7 @@
         <div class="container-fro">
             <div class="container-fruid mr-5 ml-5">
                 <h2>Boards</h2>
+                
                 <hr>
             <div class="row">
                 <div class="col-md-3">
@@ -18,6 +19,7 @@
                     </div>
                     </a>
                 </div>
+                <img src="https://i.ibb.co/xgRXVk8/slazzer-edit-image-removebg-preview.png" alt="slazzer-edit-image-removebg-preview" border="0">
                 @forelse($data as $board)
                     <div class="col-md-3">
                         <a href="/board/{{$board->id}}">

@@ -9,6 +9,8 @@ class Cards extends Model
 {
     use HasFactory;
 
+     protected $dateFormat = 'Y-m-d';
+
     protected $fillable = [
         'id_list',
         'title',

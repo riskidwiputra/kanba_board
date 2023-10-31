@@ -24,6 +24,7 @@
             <div class="board">
                 @include('livewire.detail-modal-card')
                 @include('livewire.add-modal-card')
+                @include('livewire.update-modal-card')
                 @forelse ($data['list'] as $task)
                 <div class="tasks" data-plugin="dragula">
                     <div class=" task-header d-flex justify-content-between align-items-center">
@@ -75,13 +76,11 @@
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right">
                                         <!-- item-->
-                                        <a href="#" data-toggle="modal" data-target="#update_modal_card"  class="dropdown-item editTaks"><i class="mdi mdi-pencil mdi-delete mr-1"></i>Edit</a>
+                                        <a href="javascript:;" wire:click.prevent="updateDataCard({{ $card->id }})" data-toggle="modal" data-target="#update_modal_card"  class="dropdown-item editTaks"><i class="mdi mdi-pencil mdi-delete mr-1"></i>Edit</a>
                                         <!-- item-->
-                                        <form method="POST" action="/tasks?_method=DELETE" class="d-inline">
-                                            <input type="hidden" name="id_taks" value="<%= element.id %>">
-                                            <button type="submit" class="dropdown-item"><i class="mdi mdi-delete mr-1"></i>Delete</button>
-                                        </form>
-                                        <a wire:click="deleteDataCard('{{ $card->id }}')" class="dropdown-item"  >
+                                        {{-- wire:click.prevent="updateDataCard({{ $card->id }})" --}}
+                                        
+                                        <a href="javascript:;" wire:click="deleteDataCard('{{ $card->id }}')" class="dropdown-item"  >
                                             <i class="mdi mdi-delete mr-1"></i>Delete
                                         </a>
                                        
@@ -115,10 +114,48 @@
 
 
 </div>
-
+<script>
+    $('form').on('submit', function() {
+        $('button[type="submit"]').prop('disabled', true);
+    });
+</script>
 <script>
     function myFunction(id) {
         Livewire.emit('updateIdList', id);
     }
+  
+        document.addEventListener('livewire:load', function() {
+            Livewire.on('confirmDeleteCard', (data) => {
+                Swal.fire({
+                    title: "Apakah Anda yakin ingin menghapus Card ini?",
+                    text: data.title,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, hapus Card',
+                    cancelButtonText: 'Batal',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Livewire.emit('deleteConfirmedCard', data.id);
+                    }
+                });
+            });
+            Livewire.on('deleleCard', ($response) => {
+                if($response == "success"){
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Your Card has been Deleted',
+                        timer: 5000
+                    })
+                }else {
+                    Swal.fire(
+                        'Erorr!',
+                        'Something went wrong!',
+                        'error'
+                    )
+                }
+            });
+        });
    
 </script>

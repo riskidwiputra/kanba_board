@@ -9,9 +9,9 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form wire:submit.prevent="insertCard">
+            <form wire:submit.prevent="UpdateCard">
                 <div class="modal-body">
-                    {{-- <div class="row">
+                    <div class="row">
                         <div class="col-md-8">
                             <div class="form-group">
                                 <label >Title</label>
@@ -23,12 +23,13 @@
                                 @enderror
                             </div>
                         </div>
-
-                        <div class="col-md-4"> --}}
-                            {{-- <div class="form-group">
+                        <input type="hidden" wire:model="myIdCard" name="myIdCard">
+                        <div class="col-md-4">
+                             <div class="form-group">
                                 <label >Labels</label>
                                 <select  wire:model="label" class="form-control   @error('label') is-invalid @enderror" name="label" id="label">
-                                    <option value="" readonly hidden> Labels</option>
+                                 
+                                    @if($myLabelName)<option selected value="{{$myLabelId}}"readonly hidden>{{strtoupper($myLabelName)}}</option> @endif
                                     @forelse($data['labels'] as $label)
                                         <option value="{{$label->id}}">{{ strtoupper($label->title)}}</option>
                                     @empty
@@ -39,8 +40,8 @@
                                     {{ $message }}
                                 </span>
                                 @enderror
-                            </div> --}}
-                        {{-- </div>
+                            </div> 
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="task-description">Description</label>
@@ -54,18 +55,35 @@
 
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="form-group"> --}}
-                                {{-- <label >Assign To</label>
-                                <select wire:model="assign" class="form-control  @error('description') is-invalid @enderror" name="assign" id="assign">
-                                    <option value="" readonly hidden> Assign To</option>
+                            {{-- <div class="form-group"> 
+                                <label >Assign To</label>
+                                <select wire:model="assign" class="form-control  @error('assign') is-invalid @enderror" name="assign" id="assign">
+                                    @if($myAssignName)<option selected value="{{$myAssignId}}" readonly> {{$myAssignName}}</option> @endif
                                             <option value={{ Auth::user()->id }}>{{ Auth::user()->name }}</option>
                                 </select>
                                 @error('assign')
                                 <span class="invalid-feedback">
                                     {{ $message }}
                                 </span>
-                                @enderror --}}
-                            {{-- </div>
+                                @enderror 
+                            </div> --}}
+                            <div class="form-group"> 
+                                <label >List Card</label>
+                                <select wire:model="list" class="form-control  @error('list') is-invalid @enderror" name="list" id="list">
+                                    @if($myListName)<option selected value="{{$myListId}}" readonly hidden> {{$myListName}}</option> @endif
+                                    @if($myLists)
+                                    @forelse($myLists as $mylist)
+                                    <option value="{{$mylist->id}}">{{ strtoupper($mylist->name)}}</option>
+                                    @empty
+                                    @endforelse
+                                    @endif
+                                </select>
+                                @error('assign')
+                                <span class="invalid-feedback">
+                                    {{ $message }}
+                                </span>
+                                @enderror 
+                            </div>
                         </div>
 
                         <div class="col-md-6">
@@ -73,7 +91,7 @@
                                 <label for="" class="text-dark" style="font-weight:500">Due Date</label>
                                 <input required type="date" wire:model="due_date"
                                     class="form-control @error('due_date') is-invalid @enderror"
-                                    placeholder="Masukkan End Date">
+                                    placeholder="Masukkan End Date " value="{{ $due_date }}">
                                 @error('due_date')
                                 <span class="invalid-feedback">
                                     {{ $message }}
@@ -81,7 +99,8 @@
                                 @enderror
                             </div>
                         </div>
-                    </div> --}}
+                    </div> 
+                    
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Update</button>

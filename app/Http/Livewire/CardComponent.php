@@ -17,11 +17,18 @@ class CardComponent extends Component
     public $detailNameCard,$detailNameBacklog,$detailAssign,$detailCreatedBy,$detailLabel,$detailCreatedAt,$detailDueDate,$detailDescription;
 
     public $title,$label,$id_list,$description,$assign,$due_date;
+
+    public $myLabelName,$myLabelId,$myAssignName,$myAssignId,$myListName,$myListId,$myLists,$myIdCard;
   
+    public $list;
+    
     protected $listeners = [
         'updateIdList' => 'updateIdList',
         'detailCard' => 'detailCard',
         'createCard' => '$refresh',
+        'deleteConfirmedCard' => 'deleteConfirmedCard',
+        'updateCard' => '$refresh'
+        // 'deleleCard' => '$refresh',
     ];
     
     public function mount($id)
@@ -85,6 +92,67 @@ class CardComponent extends Component
 
         $this->emit('createCard', $this->response);
     }
+    public function deleteDataCard($id)
+    {
+
+        $card = Cards::find($id);
+
+        $this->emit('confirmDeleteCard', $card );
+    }
+
+    public function deleteConfirmedCard($id){
+        
+        $card = Cards::find($id);
+        // $cardAssign = 
+        $card->assigns()->detach();
+        $card->delete();
+        // $card->delete();
+        if($card){
+            $this->response = "success";
+        }else{
+            $this->response = "failed";
+        };
+        $this->emit('deleleCard', $this->response);
+    
+    }
+
+    public function updateDataCard($id){
+        $user = $this->user;
+        $card = Cards::where('id',$id)->with('label')->with('list')->first();
+        $this->title = $card->title;
+        $this->myLabelName = optional($card->label)->title ?? '';
+        $this->myLabelId = $card->id_label;
+        $this->description = $card->description;
+        $this->myAssignName= "asd";
+        $this->myAssignId = $user->id;
+        $this->due_date = $card->due_date;
+        $this->myListName = $card->list->name;
+        $this->myListId = $card->list->id;
+        $this->myIdCard = $card->id;
+        $myIdBoard= $card->list->id_board;
+        $this->myLists = Lists::where('id_board',$myIdBoard)->get();
+     
+    }
+    public function UpdateCard(){
+        $id_card = $this->myIdCard;
+        $card = Cards::find($id_card);
+        $updateData = $card->update([
+            'title' => $this->title,
+            'description'=> $this->description,
+            'due_date'=> $this->due_date,
+            'id_label'=> $this->myLabelId,
+            'id_list'=> $this->list,
+        ]);
+        if($updateData){
+            $this->response = "success";
+        }else{
+            $this->response = "failed";
+        };
+
+        $this->resetFields();
+
+        $this->emit('updateCard', "success"); 
+    }
 
 
     public function render()
@@ -95,8 +163,7 @@ class CardComponent extends Component
                 $c->with('label');
                 $c->with('assigns');
         })->get();
-        
-
+   
         $labels = labels::all();
 
         $data = [
@@ -104,6 +171,7 @@ class CardComponent extends Component
             'list' => $list,
             'labels' => $labels
         ];
+      
 
         return view('livewire.card-component',['data' => $data]);
     }
