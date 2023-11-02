@@ -1,0 +1,71 @@
+version: '3'
+
+services:
+
+  app:
+    build: .
+    image: kanbaboard
+    container_name: kanbaboard
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+    working_dir: /var/www/kanbaboard
+    volumes:
+      - .:/var/www/kanbaboard
+      - ./storage/php.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - kanbaboard
+
+  webserver:
+    image: nginx:latest
+    container_name: nginxkanbaboard
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "2022:80"
+    volumes:
+      - .:/var/www/kanbaboard
+      - ./storage/:/etc/nginx/conf.d/
+    networks:
+      - kanbaboard
+
+  db:
+    image:  mysql:latest
+    container_name: dbkanbaboard
+    restart: always
+    tty: true
+    ports:  
+      - "20222:3306"
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+        # MYSQL_USER  : root
+        # MYSQL_DATABASE : pengembangan_operasi
+        MYSQL_PASSWORD  : kanbaboard
+        MYSQL_ROOT_PASSWORD: kanbaboard
+        SERVICE_TAGS: dev
+        SERVICE_NAME : mysql
+    networks:
+      - kanbaboard
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: pmakanbaboard
+    links:
+      - db
+    restart: always
+    ports:
+      - 7000:80
+    networks:
+      - kanbaboard
+
+#NETWORK
+networks:
+  kanbaboard:
+    driver: bridge
+
+# VOLUMES
+# volumes:
+#   lbdata:
+#     driver:local

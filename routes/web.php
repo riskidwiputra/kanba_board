@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\board\BoardController;
 use App\Http\Controllers\Board\SingleBoardController;
+use App\Http\Controllers\CheckController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Livewire\BoardComponent;
 use App\Http\Livewire\CardComponent;
@@ -20,10 +21,11 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', [BoardController::class, 'show']);
-
+Route::get('/check_koneksi', [CheckController::class, 'tes']);
 
 
 Route::middleware('auth')->group(function () {
+    
     Route::get('/dashboard' , BoardComponent::class);
     // Route::get('/dashboard', [BoardController::class, 'show'])->name('dashboard');
     // Route::get('/board/{id}', [SingleBoardController::class, 'show']);
