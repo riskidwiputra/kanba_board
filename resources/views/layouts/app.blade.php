@@ -91,7 +91,7 @@
             <!-- Page Heading -->
             @if (isset($header))
                 <header class="color_primary shadow">
-                    <div class="max-w-12xl mx-auto py-3 px-4 sm:px-6 lg:px-8">
+                    <div class="max-w-12xl mx-auto py-3 px-4 sm:px-6 lg:px-8 d-flex justify-content-between align-items-center">
                         {{ $header }}
                     </div>
                 </header>

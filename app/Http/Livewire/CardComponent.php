@@ -158,7 +158,7 @@ class CardComponent extends Component
     public function render()
     {
 
-        $board = Board::where('id', $this->idBoard)->first();
+        $board = Board::where('id', $this->idBoard)->with("collaborators")->first();
         $list = Lists::where('id_board', $board->id)->with('cards', function($c){
                 $c->with('label');
                 $c->with('assigns');
@@ -171,7 +171,6 @@ class CardComponent extends Component
             'list' => $list,
             'labels' => $labels
         ];
-      
 
         return view('livewire.card-component',['data' => $data]);
     }

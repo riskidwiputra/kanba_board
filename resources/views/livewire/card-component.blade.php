@@ -1,8 +1,58 @@
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<style>
+    .tooltip-container {
+    position: relative;
+    display: inline-block;
+}
 
+.tooltip {
+    visibility: hidden;
+    width: 120px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip-container:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+</style>
 <x-slot name="header">
     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
         {{ $data['board']['title'] }}
     </h2>
+    <div style="display: flex;">
+    <span class="mb-0 align-middle" style="display: flex;">
+    
+        @forelse ($data['board']['collaborators'] as $collaborators)
+        <div class="tooltip-container">
+            <img src="https://eu.ui-avatars.com/api/?name={{$collaborators->name}}" alt="{{$collaborators->name}}" title="{{$collaborators->name}}" style="width: 35px; height: 35px;margin-left:-5px" alt="user-img"
+            class="avatar-xs rounded-circle mr-1" />
+            <div class="tooltip">{{$collaborators->name}}</div>
+        </div>
+           
+        @empty
+        @endforelse
+       
+      
+       
+    </span>
+        <!-- Modal -->
+        {{-- @livewire('search-members') --}}
+
+        <livewire:search-members idBoard="{{ $data['board']['id'] }}">
+    </div>
 </x-slot>
 
 <div class="max-w-12xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -11,9 +61,10 @@
     <!-- start page title -->
     <div class="row">
         <div class="col-12">
-            <div class="page-title-box">
+            <div class="page-title-box ">
 
                 <h2 class="page-title">Card</h2>
+              
             </div>
         </div>
     </div>
@@ -157,5 +208,6 @@
                 }
             });
         });
-   
+      
+
 </script>
