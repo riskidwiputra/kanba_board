@@ -1,0 +1,136 @@
+apiVersion: v1
+kind: Service
+metadata:
+ name: kanbaboard-service
+spec:
+ type: NodePort
+ ports:
+   - port: 80
+     nodePort: 31000
+ selector:
+   app: kanbaboard
+---
+apiVersion: v1
+kind: Service
+metadata:
+ name: phpmyadmin-service
+spec:
+ type: NodePort
+ ports:
+   - port: 80
+     nodePort: 31002
+ selector:
+   app: phpmyadmin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: kanbaboard
+spec:
+ replicas: 1
+ selector:
+   matchLabels:
+     app: kanbaboard
+ template:
+   metadata:
+     labels:
+       app: kanbaboard
+   spec:
+     containers:
+     - name: kanbaboard
+       image: kanbaboard
+       imagePullPolicy: Never
+       env:
+       - name: SERVICE_NAME
+         value: "app"
+       volumeMounts:
+       - mountPath: /var/www/kanbaboard
+         name: kanbaboard-volume
+       - mountPath: /usr/local/etc/php/conf.d/local.ini
+         subPath: storage/php.ini
+         name: kanbaboard-volume
+     volumes:
+     - name: kanbaboard-volume
+       hostPath:
+         path: /path/to/kanbaboard
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: phpmyadmin
+spec:
+ replicas: 1
+ selector:
+   matchLabels:
+     app: phpmyadmin
+ template:
+   metadata:
+     labels:
+       app: phpmyadmin
+   spec:
+     containers:
+     - name: phpmyadmin
+       image: phpmyadmin/phpmyadmin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: nginx
+spec:
+ replicas: 1
+ selector:
+   matchLabels:
+     app: nginx
+ template:
+   metadata:
+     labels:
+       app: nginx
+   spec:
+     containers:
+     - name: nginx
+       image: nginx:latest
+       imagePullPolicy: Never
+       volumeMounts:
+       - mountPath: /var/www/kanbaboard
+         name: kanbaboard-volume
+       - mountPath: /etc/nginx/conf.d/
+         subPath: storage/
+         name: kanbaboard-volume
+     volumes:
+     - name: kanbaboard-volume
+       hostPath:
+         path: /path/to/kanbaboard
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: db
+spec:
+ replicas: 1
+ selector:
+   matchLabels:
+     app: db
+ template:
+   metadata:
+     labels:
+       app: db
+   spec:
+     containers:
+     - name: db
+       image: mysql:latest
+       env:
+       - name: MYSQL_PASSWORD
+         value: "kanbaboard"
+       - name: MYSQL_ROOT_PASSWORD
+         value: "kanbaboard"
+       - name: SERVICE_TAGS
+         value: "dev"
+       - name: SERVICE_NAME
+         value: "mysql"
+       volumeMounts:
+       - mountPath: /var/lib/mysql
+         name: mysql-volume
+     volumes:
+     - name: mysql-volume
+       hostPath:
+         path: /var/lib/mysql

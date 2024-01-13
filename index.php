@@ -1,5 +1,9 @@
 <?php
-
-echo "<h1>HELLO GUYS</h1>";
+ $x = 0.0001;
+ for ($i = 0; $i <= 5000000; $i++) {
+    $x = sqrt($x);
+ }
+ 
+ echo "OK! Hello World";
 
 ?>

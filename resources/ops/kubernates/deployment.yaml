@@ -27,10 +27,23 @@ spec:
         fsGroup: 82
       containers:
         - name: fpm
-          image: docker.io/zanemy/php-fpm:latest
+          image: docker.io/riskidwiputra/php-apache:1.0.3
           resources:
             limits:
-              cpu: 500m
-              memory: 50M
+              cpu: 1000m
+              memory: 1000M
           ports:
             - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: laravel-example-project-service
+spec:
+  selector:
+    app: laravel-example-project
+  ports:
+    - protocol: TCP
+      port: 8003
+      targetPort: 80
+  type: NodePort
